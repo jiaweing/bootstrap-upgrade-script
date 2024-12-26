@@ -124,6 +124,7 @@ REPLACEMENTS = {
     r'tab-pane\b(?!\s+fade\s+show)': 'tab-pane fade show',
     
     # Dropdowns
+    r'<a[^>]*data-bs-toggle="dropdown"[^>]*>': lambda m: m.group(0).replace('>', ' role="button">') if 'role=' not in m.group(0) else m.group(0),
     r'\sdata-toggle=["\']dropdown["\']': ' data-bs-toggle="dropdown"',
     r'\sdata-toggle\s*=\s*["\']dropdown["\']': ' data-bs-toggle="dropdown"',
     r'data-reference=["\']parent["\']': 'data-bs-reference="parent"',
@@ -150,6 +151,19 @@ REPLACEMENTS = {
         lambda m: m.group(0).replace('tab-pane', 'tab-pane fade'),
     r'<div[^>]*class="[^"]*tab-pane\s+active[^"]*"[^>]*>(?![^<]*\bshow\b)':
         lambda m: m.group(0).replace('active', 'active show'),
+
+    # Modal fixes
+    r'\sdata-toggle="modal"': ' data-bs-toggle="modal"',
+    r'\sdata-target="([^"]+)"': r' data-bs-target="\1"',
+    r'\sdata-dismiss="modal"': ' data-bs-dismiss="modal"',
+    r'<button[^>]*class="[^"]*close[^"]*"[^>]*>\s*(?:<span[^>]*>[^<]*</span>\s*)?</button>':
+        '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>',
+    r'<div class="modal fade"([^>]*)>(?![^<]*\sdata-bs-backdrop=)':
+        '<div class="modal fade" data-bs-backdrop="true"\\1>',
+    r'<div class="modal-dialog([^"]*)"([^>]*)>(?![^<]*\sdata-bs-keyboard=)':
+        '<div class="modal-dialog\\1"\\2 data-bs-keyboard="true">',
+    r'modal-dialog(?!\s+modal-dialog-scrollable)(\s+modal-dialog-centered)': 
+        'modal-dialog modal-dialog-scrollable\\1',
 }
 
 def upgrade_bootstrap(directory):

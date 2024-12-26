@@ -5,8 +5,8 @@ import shutil
 
 REPLACEMENTS = {
     # Float classes
-    r'float-left\b': 'float-start',
-    r'float-right\b': 'float-end',
+    r'float-.*right\b': 'float-end',
+    r'float-.*left\b': 'float-start',
     
     # Margin/Padding
     r'ml-([0-5x])\b': r'ms-\1',
@@ -140,6 +140,16 @@ REPLACEMENTS = {
     
     # Popper positioning
     r'data-placement="([^"]+)"\b': r'data-bs-placement="\1"',
+
+    # Tab fixes
+    r'<a[^>]*class="[^"]*nav-link[^"]*"[^>]*data-bs-toggle="tab"[^>]*href="([^"]*)"([^>]*)>': 
+        lambda m: m.group(0).replace(f'href="{m.group(1)}"', f'href="{m.group(1)}" data-bs-target="{m.group(1)}"'),
+    
+    # Tab pane fixes
+    r'<div[^>]*class="[^"]*tab-pane[^"]*"[^>]*>(?![^<]*\bfade\b)': 
+        lambda m: m.group(0).replace('tab-pane', 'tab-pane fade'),
+    r'<div[^>]*class="[^"]*tab-pane\s+active[^"]*"[^>]*>(?![^<]*\bshow\b)':
+        lambda m: m.group(0).replace('active', 'active show'),
 }
 
 def upgrade_bootstrap(directory):

@@ -124,7 +124,14 @@ REPLACEMENTS = {
     r'tab-pane\b(?!\s+fade\s+show)': 'tab-pane fade show',
     
     # Dropdowns
-    r'<a[^>]*data-bs-toggle="dropdown"[^>]*>': lambda m: m.group(0).replace('>', ' role="button">') if 'role=' not in m.group(0) else m.group(0),
+    r'<li class="dropdown"': '<li class="dropdown" data-bs-auto-close="true"',
+    r'<a[^>]*data-bs-toggle="dropdown"[^>]*>': lambda m: (
+        m.group(0)
+            .replace('class="', 'class="dropdown-toggle ')
+            .replace('>', ' role="button" data-bs-display="static" aria-expanded="false">')
+        if 'dropdown-toggle' not in m.group(0)
+        else m.group(0).replace('>', ' role="button" data-bs-display="static" aria-expanded="false">')
+    ),
     r'\sdata-toggle=["\']dropdown["\']': ' data-bs-toggle="dropdown"',
     r'\sdata-toggle\s*=\s*["\']dropdown["\']': ' data-bs-toggle="dropdown"',
     r'data-reference=["\']parent["\']': 'data-bs-reference="parent"',
